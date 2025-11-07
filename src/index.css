@@ -5,3 +5,54 @@
 *{
     font-family: 'Nunito', sans-serif;
 }
+
+.country-select .flag-select__btn {
+    width: 100%;
+    padding: 0.5rem 0.75rem;
+    border: 1px solid #132391;
+    border-radius: 0.375rem;
+    background-color: #ffffff;
+    color: #374151;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease, color 0.2s ease;
+    box-shadow: none;
+}
+
+.country-select .flag-select__btn:focus,
+.country-select .flag-select__btn:focus-visible,
+.country-select .flag-select__btn[aria-expanded="true"] {
+    outline: none;
+    border-color: #132391;
+    box-shadow: 0 0 0 2px rgba(19, 35, 145, 0.35);
+}
+
+.country-select .flag-select__btn svg {
+    width: 1rem;
+    height: 1rem;
+    color: #132391;
+    fill: #132391;
+}
+
+.country-select .flag-select__option__icon {
+    margin-right: 0.5rem;
+}
+
+.country-select .flag-select__search-box {
+    padding: 0.5rem 0.75rem;
+}
+
+.country-select .flag-select__input {
+    width: 100%;
+    padding: 0.5rem 0.75rem;
+    border: 1px solid #132391;
+    border-radius: 0.375rem;
+    outline: none;
+    box-shadow: none;
+}
+
+.country-select .flag-select__option:hover {
+    background-color: rgba(19, 35, 145, 0.08);
+}

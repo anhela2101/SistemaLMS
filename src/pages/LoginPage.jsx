@@ -1,25 +1,44 @@
-import React, { useState } from 'react'
-import { Eye, EyeOff, ArrowRight, CircleArrowOutUpRight } from 'lucide-react'
+import React, { useEffect, useRef, useState } from 'react'
+import { Eye, EyeOff, CircleArrowOutUpRight, Loader2 } from 'lucide-react'
 import loginImage from '../assets/img/login.jpg'
 import logoBlanco from '../assets/img/LogoBlanco.png'
 import Input from '../components/generals/Input'
 import Button from '../components/generals/Button'
+import { useNavigate } from 'react-router-dom'
 
 const LoginPage = () => {
   const [showPassword, setShowPassword] = useState(false)
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
+  const [isLoading, setIsLoading] = useState(false)
+
+  const navigate = useNavigate()
+  const loginTimeoutRef = useRef(null)
 
   const handleSubmit = (e) => {
     e.preventDefault()
-    // Aquí va la lógica de login
-    console.log('Login:', { email, password })
+    if (isLoading) return
+
+    setIsLoading(true)
+
+    loginTimeoutRef.current = setTimeout(() => {
+      setIsLoading(false)
+      navigate('/home')
+    }, 1500)
   }
 
   const handleGoogleLogin = () => {
     // Aquí va la lógica de login con Google
     console.log('Google login')
   }
+
+  useEffect(() => {
+    return () => {
+      if (loginTimeoutRef.current) {
+        clearTimeout(loginTimeoutRef.current)
+      }
+    }
+  }, [])
 
   return (
     <div className="flex min-h-screen ">
@@ -114,9 +133,19 @@ const LoginPage = () => {
               type="submit"
               variant="primary"
               className="w-full flex items-center justify-center gap-2"
+              disabled={isLoading}
             >
-              Iniciar sesión
-               <CircleArrowOutUpRight className="w-5 h-5" />
+              {isLoading ? (
+                <>
+                  <Loader2 className="w-5 h-5 animate-spin" />
+                  Iniciando sesión...
+                </>
+              ) : (
+                <>
+                  Iniciar sesión
+                  <CircleArrowOutUpRight className="w-5 h-5" />
+                </>
+              )}
             </Button>
           </form>
 

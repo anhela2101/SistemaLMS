@@ -8,6 +8,7 @@ import HomePage from "../pages/HomePage";
 import ResetPasswordPage from "../pages/ResetPasswordPage";
 import NewPasswordPage from "../pages/NewPasswordPage";
 import ResetPasswordPage2 from "../pages/ResetPasswordPage2";
+import CourseDetailPage from "../pages/CourseDetailPage";
 
 export const MyRoutes = () => {
   return (
@@ -23,6 +24,7 @@ export const MyRoutes = () => {
         <Route path="/" element={<ProtectedRoutes />}>
           <Route element={<DashboardLayout />}>
             <Route path="home" element={<HomePage />} />
+            <Route path="courses/:courseId" element={<CourseDetailPage />} />
           </Route>
         </Route>
       </Routes>
