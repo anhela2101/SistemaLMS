@@ -1,10 +1,11 @@
 import React from 'react'
+import Button from '../components/generals/Button'
 
 const LadingPage = () => {
   return (
-    <h1 className="text-3xl font-bold text-green-500 underline">
-      Hello world!
-    </h1>
+    <>
+      <Button variant="primary" label="Iniciar Sesion" />
+    </>
   )
 }
 
