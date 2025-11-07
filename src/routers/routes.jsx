@@ -5,6 +5,9 @@ import LoginPage from "../pages/LoginPage";
 import RegisterPage from "../pages/RegisterPage";
 import DashboardLayout from "../layouts/DashboardLayout";
 import HomePage from "../pages/HomePage";
+import ResetPasswordPage from "../pages/ResetPasswordPage";
+import NewPasswordPage from "../pages/NewPasswordPage";
+import ResetPasswordPage2 from "../pages/ResetPasswordPage2";
 
 export const MyRoutes = () => {
   return (
@@ -13,6 +16,9 @@ export const MyRoutes = () => {
         <Route exact path="/" element={<LadingPage />} />
         <Route path="/login" element={<LoginPage />} />
         <Route path="/register" element={<RegisterPage />} />
+        <Route path="/reset-password" element={<ResetPasswordPage />} />
+        <Route path="/new-password" element={<NewPasswordPage />} />
+        <Route path="/reset-password2" element={<ResetPasswordPage2 />} />
 
         <Route path="/" element={<ProtectedRoutes />}>
           <Route element={<DashboardLayout />}>
