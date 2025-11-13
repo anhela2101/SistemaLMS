@@ -5,6 +5,7 @@ import logoBlanco from '../assets/img/LogoBlanco.png'
 import Input from '../components/generals/Input'
 import Button from '../components/generals/Button'
 import { useNavigate } from 'react-router-dom'
+import Cookies from "js-cookie";
 
 const LoginPage = () => {
   const [showPassword, setShowPassword] = useState(false)
@@ -22,6 +23,7 @@ const LoginPage = () => {
     setIsLoading(true)
 
     loginTimeoutRef.current = setTimeout(() => {
+      Cookies.set('sesion', 'true')
       setIsLoading(false)
       navigate('/home')
     }, 1500)
