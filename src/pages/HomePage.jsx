@@ -125,13 +125,13 @@ const HomePage = () => {
               </p>
 
               <div className="flex items-center justify-between">
-                <button
+                <Button
                   type="button"
                   onClick={() => handleNavigate(course.id)}
                   className="text-sm font-semibold text-[#132391] hover:text-[#0B1B86]"
                 >
                   Saber más
-                </button>
+                </Button>
 
                 {course.price ? (
                   <span className="rounded-full bg-[#F0F4FF] px-4 py-2 text-sm font-bold text-[#132391]">
