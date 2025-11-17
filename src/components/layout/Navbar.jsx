@@ -3,7 +3,7 @@ import { Bell, ChevronDown } from 'lucide-react'
 
 const Navbar = ({ title = 'Explorar cursos' }) => {
   return (
-    <header className="flex items-center justify-between gap-4 px-6 py-5 bg-white border-b border-gray-100">
+    <header className="flex items-center justify-between gap-4 px-6 py-5 bg-white ">
       <div>
         <h1 className="text-2xl font-bold text-[#0B1B86]">{title}</h1>
       </div>

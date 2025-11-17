@@ -9,6 +9,9 @@ import ResetPasswordPage from "../pages/ResetPasswordPage";
 import NewPasswordPage from "../pages/NewPasswordPage";
 import ResetPasswordPage2 from "../pages/ResetPasswordPage2";
 import CourseDetailPage from "../pages/CourseDetailPage";
+import CertificatesPage from "../pages/CertificatesPage";
+import PurchasesPage from "../pages/PurchasesPage";
+import MyCoursesPage from "../pages/MyCoursesPage";
 
 export const MyRoutes = () => {
   return (
@@ -25,6 +28,9 @@ export const MyRoutes = () => {
           <Route element={<DashboardLayout />}>
             <Route path="home" element={<HomePage />} />
             <Route path="courses/:courseId" element={<CourseDetailPage />} />
+            <Route path="my-certificates" element={<CertificatesPage />} />
+            <Route path="my-purchases" element={<PurchasesPage />} />
+            <Route path="my-courses" element={<MyCoursesPage />} />
           </Route>
         </Route>
       </Routes>

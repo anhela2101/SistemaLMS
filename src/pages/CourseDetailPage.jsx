@@ -1,13 +1,16 @@
 import React from 'react'
-import { Play, Clock, Video, Users, FileCheck, Download, MonitorPlay, Award, ShieldCheck, Star, StarHalf } from 'lucide-react'
+import { useLocation } from 'react-router-dom'
+import { Play, Youtube, Clock, Video, Users, FileCheck, Download, MonitorPlay, Award, ShieldCheck, Star, StarHalf, CircleArrowOutUpRight, MoveUpRight, Calendar, FileDown, FilePenLine, CircleCheck } from 'lucide-react'
 import Button from '../components/generals/Button'
+import PaymentMethod from '../components/courseDetails/paymentMethod'
+import FreeMethod from '../components/courseDetails/freeMethod'
 
 const includedItems = [
-  { label: 'Clases en video disponibles 24/7', icon: MonitorPlay },
-  { label: 'Acceso al curso por 30 días', icon: Clock },
-  { label: 'Material descargable', icon: Download },
+  { label: 'Clases en video disponibles 24/7', icon: Youtube },
+  { label: 'Acceso al curso por 30 días', icon: Calendar },
+  { label: 'Material descargable', icon: FileDown },
   { label: 'Certificado digital inmediato', icon: Award },
-  { label: 'Examen online', icon: FileCheck }
+  { label: 'Examen online', icon: FilePenLine }
 ]
 
 const endorsements = [
@@ -15,17 +18,16 @@ const endorsements = [
   'MEDCRI – Centro de Entrenamiento Internacional'
 ]
 
+
 const CourseDetailPage = () => {
+  const location = useLocation()
+  const tag = location?.state?.tag
+
+  const isFree = tag === 'Gratuito'
+
   return (
     <div className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_360px]">
       <section className="space-y-6">
-        <div>
-          <button className="flex items-center gap-2 text-sm font-semibold text-[#132391] hover:text-[#0B1B86]">
-            <span className="text-lg">↩</span>
-            Descripción del curso
-          </button>
-        </div>
-
         <header className="space-y-3">
           <div>
             <h1 className="text-3xl font-bold text-[#0B1B86] uppercase">REACT® – I</h1>
@@ -46,7 +48,7 @@ const CourseDetailPage = () => {
             </div>
           </div>
 
-          <div className="flex flex-wrap items-center gap-4 text-sm text-[#132391]">
+          <div className="flex justify-between items-center text-sm text-[#132391] w-full gap-4 flex-wrap sm:flex-nowrap">
             <span className="flex items-center gap-2">
               <Clock className="w-4 h-4" />
               5 horas
@@ -118,110 +120,105 @@ const CourseDetailPage = () => {
         </article>
       </section>
 
-      <aside className="space-y-6">
-        <div className="rounded-3xl bg-white p-6 shadow-sm">
-          <h3 className="text-lg font-semibold text-[#0B1B86]">Valor del curso</h3>
-          <p className="mt-4 text-3xl font-extrabold text-[#0B1B86]">$ 0000,00</p>
+      {/* Sidebar DERECHA */}
+      <aside
+        className="rounded-lg p-8 shadow-lg"
+        style={{ backgroundColor: '#F7F9FF' }}
+      >
+        <div className="space-y-6">
+          <div className="pb-6 border-b" style={{ borderColor: 'rgba(28, 101, 166, 1)' }}>
+            <h3 className="text-lg font-semibold text-[#0B1B86]">Valor del curso</h3>
+            {!isFree && (
+              <>
+                <PaymentMethod />
+              </>
+            )}
 
-          <div className="mt-4 space-y-2 text-xs font-semibold uppercase tracking-wide text-gray-500">
-            <p>Métodos de pago</p>
-            <div className="flex flex-wrap gap-2 text-xs text-gray-600">
-              <span className="rounded-md bg-gray-100 px-2 py-1">Visa</span>
-              <span className="rounded-md bg-gray-100 px-2 py-1">Mastercard</span>
-              <span className="rounded-md bg-gray-100 px-2 py-1">American Express</span>
-              <span className="rounded-md bg-gray-100 px-2 py-1">Plin</span>
-              <span className="rounded-md bg-gray-100 px-2 py-1">Yape</span>
-              <span className="rounded-md bg-gray-100 px-2 py-1">PagoEfectivo</span>
+            {isFree && (
+              <FreeMethod />
+            )}
+
+            <div className="mt-6 border-b" style={{ borderColor: 'rgba(28, 101, 166, 1)' }} />
+
+
+            <div className="mt-6  space-y-3">
+              <h4 className="text-md mb-8 font-bold text-[#0B1B86]">Incluye</h4>
+              <ul className="space-y-4 text-sm text-gray-600">
+                {includedItems.map(({ label, icon: Icon }) => (
+                  <li key={label} className="flex items-center gap-3">
+                    <Icon className="w-4 h-4 text-[#132391]" />
+                    {label}
+                  </li>
+                ))}
+              </ul>
             </div>
           </div>
 
-          <Button
-            variant="primary"
-            className="mt-6 w-full bg-[#132391] hover:bg-[#0B1B86]"
-          >
-            Quiero este curso
-          </Button>
-
-          <div className="mt-6 space-y-3">
-            <h4 className="text-sm font-semibold text-[#0B1B86]">Incluye</h4>
-            <ul className="space-y-2 text-sm text-gray-600">
-              {includedItems.map(({ label, icon: Icon }) => (
-                <li key={label} className="flex items-center gap-3">
-                  <Icon className="w-4 h-4 text-[#132391]" />
-                  {label}
-                </li>
-              ))}
-            </ul>
-          </div>
-        </div>
-
-        <div className="rounded-3xl bg-white p-6 shadow-sm space-y-4">
-          <div>
-            <h4 className="text-sm font-semibold text-[#0B1B86]">Respaldo oficial de:</h4>
-            <ul className="mt-3 space-y-2 text-sm text-gray-600">
-              {endorsements.map((item) => (
-                <li key={item} className="flex items-center gap-3">
-                  <ShieldCheck className="w-4 h-4 text-[#132391]" />
-                  {item}
-                </li>
-              ))}
-            </ul>
-          </div>
-
-          <div>
-            <h4 className="text-sm font-semibold text-[#0B1B86]">Ellos ya se capacitaron</h4>
-            <p className="text-xs text-gray-500">+ 6 000 alumnos certificados con éxito</p>
-
-            <div className="mt-3 flex items-end gap-3">
-              <div className="flex items-center gap-1 text-[#F5A623]">
-                <Star className="w-5 h-5" />
-                <Star className="w-5 h-5" />
-                <Star className="w-5 h-5" />
-                <Star className="w-5 h-5" />
-                <StarHalf className="w-5 h-5" />
-              </div>
-              <div>
-                <p className="text-2xl font-bold text-[#132391]">4.5</p>
-                <p className="text-xs text-gray-500">106 reseñas</p>
-              </div>
+          <div className="pt-6">
+            {/* Respaldo oficial */}
+            <div className="pb-8 border-b" style={{ borderColor: 'rgba(28, 101, 166, 1)' }}>
+              <h4 className="text-md font-bold text-[#0B1B86]">Respaldo oficial de:</h4>
+              <ul className="mt-3 space-y-2 text-sm text-gray-600">
+                {endorsements.map((item) => (
+                  <li key={item} className="flex items-center gap-3">
+                    <CircleCheck className="w-4 h-4 text-[#132391]" />
+                    {item}
+                  </li>
+                ))}
+              </ul>
             </div>
 
-            <div className="mt-4 space-y-2 text-sm">
-              <div className="flex items-center gap-2">
-                <span className="w-12 text-xs font-semibold uppercase text-gray-500">5</span>
-                <div className="h-2 flex-1 overflow-hidden rounded-full bg-gray-200">
-                  <div className="h-full w-4/5 rounded-full bg-[#132391]" />
-                </div>
-              </div>
-              <div className="flex items-center gap-2">
-                <span className="w-12 text-xs font-semibold uppercase text-gray-500">4</span>
-                <div className="h-2 flex-1 overflow-hidden rounded-full bg-gray-200">
-                  <div className="h-full w-3/5 rounded-full bg-[#132391]" />
-                </div>
-              </div>
-              <div className="flex items-center gap-2">
-                <span className="w-12 text-xs font-semibold uppercase text-gray-500">3</span>
-                <div className="h-2 flex-1 overflow-hidden rounded-full bg-gray-200">
-                  <div className="h-full w-2/5 rounded-full bg-[#132391]" />
-                </div>
-              </div>
-              <div className="flex items-center gap-2">
-                <span className="w-12 text-xs font-semibold uppercase text-gray-500">2</span>
-                <div className="h-2 flex-1 overflow-hidden rounded-full bg-gray-200">
-                  <div className="h-full w-1/5 rounded-full bg-[#132391]" />
-                </div>
-              </div>
-              <div className="flex items-center gap-2">
-                <span className="w-12 text-xs font-semibold uppercase text-gray-500">1</span>
-                <div className="h-2 flex-1 overflow-hidden rounded-full bg-gray-200">
-                  <div className="h-full w-[10%] rounded-full bg-[#132391]" />
-                </div>
-              </div>
-            </div>
+            {/* Ellos ya se capacitaron */}
+            <div className="pt-6">
+              <h4 className="text-md font-bold text-[#0B1B86]">Ellos ya se capacitaron</h4>
+              <p className="text-xs text-gray-500">+ 0000 ALUMNOS CERTIFICADOS CON ÉXITO</p>
 
-            <div className="mt-4 rounded-2xl bg-[#132391]/5 p-4 text-sm text-[#132391]">
-              <p className="font-semibold">88% Recomendados</p>
-              <p className="text-xs text-[#132391]/70">Basado en 106 reseñas verificadas.</p>
+              <div className="mt-3 flex items-start gap-8">
+                <div>
+                  <div className="flex items-center gap-1 text-[#F5A623]">
+                    <p className="text-xl font-bold text-black">4.5</p>
+                    <Star className="w-4 h-4 text-[#F5A623] fill-[#F5A623]" />
+                  </div>
+                  <p className="mt-1 text-xs text-gray-500">106 reseñas</p>
+                </div>
+                <div>
+                  <p className="text-xl font-bold text-black">88%</p>
+                  <p className="mt-1 text-xs text-gray-500">Recomendados</p>
+                </div>
+              </div>
+
+              <div className="mt-4 space-y-2 text-sm">
+                <div className="flex items-center gap-2">
+                  <span className="w-12 text-xs font-semibold uppercase text-gray-500">5</span>
+                  <div className="h-2 flex-1 overflow-hidden rounded-full bg-gray-200">
+                    <div className="h-full w-4/5 rounded-full bg-[#F5A623]" />
+                  </div>
+                </div>
+                <div className="flex items-center gap-2">
+                  <span className="w-12 text-xs font-semibold uppercase text-gray-500">4</span>
+                  <div className="h-2 flex-1 overflow-hidden rounded-full bg-gray-200">
+                    <div className="h-full w-3/5 rounded-full bg-[#F5A623]" />
+                  </div>
+                </div>
+                <div className="flex items-center gap-2">
+                  <span className="w-12 text-xs font-semibold uppercase text-gray-500">3</span>
+                  <div className="h-2 flex-1 overflow-hidden rounded-full bg-gray-200">
+                    <div className="h-full w-2/5 rounded-full bg-[#F5A623]" />
+                  </div>
+                </div>
+                <div className="flex items-center gap-2">
+                  <span className="w-12 text-xs font-semibold uppercase text-gray-500">2</span>
+                  <div className="h-2 flex-1 overflow-hidden rounded-full bg-gray-200">
+                    <div className="h-full w-1/5 rounded-full bg-[#F5A623]" />
+                  </div>
+                </div>
+                <div className="flex items-center gap-2">
+                  <span className="w-12 text-xs font-semibold uppercase text-gray-500">1</span>
+                  <div className="h-2 flex-1 overflow-hidden rounded-full bg-gray-200">
+                    <div className="h-full w-[10%] rounded-full bg-[#F5A623]" />
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </div>
