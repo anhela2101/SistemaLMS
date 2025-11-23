@@ -1,6 +1,7 @@
 import React from 'react'
-import { Clock, CirclePlay, ChartColumnBig } from 'lucide-react'
+import { Clock, CirclePlay, ChartColumnBig, Unlock } from 'lucide-react'
 import Button from '../generals/Button'
+import certificado from '../../assets/img/certificado.svg'
 
 const MyCoursesCard = ({ course }) => {
   if (!course) return null
@@ -45,15 +46,16 @@ const MyCoursesCard = ({ course }) => {
 
           {modulesText && typeof progress === 'number' && (
             <div className="mt-3">
-              <div className="mb-1 flex items-center justify-between text-xs text-white/80">
-                <span>{modulesText}</span>
-                <span>{progress}%</span>
-              </div>
-              <div className="h-1.5 w-full overflow-hidden rounded-full bg-white/30">
+              
+              <div className="h-2 w-full overflow-hidden rounded-full bg-white/80">
                 <div
                   className="h-full rounded-full"
-                  style={{ width: `${progress}%`, backgroundColor: 'rgba(19, 35, 145, 1)' }}
+                  style={{ width: `${progress}%`, backgroundColor: 'rgba(45, 170, 173, 1)' }}
                 />
+              </div>
+              <div className="mt-2 flex items-center justify-between text-xs text-white/80">
+                <span>{modulesText}</span>
+                <span>{progress}%</span>
               </div>
             </div>
           )}
@@ -61,7 +63,7 @@ const MyCoursesCard = ({ course }) => {
       </div>
 
       <div className="space-y-4 px-6 py-6">
-        <div className="flex flex-wrap items-center gap-x-6 gap-y-2 text-sm text-[#132391]">
+        <div className="flex flex-wrap justify-between gap-x-6 gap-y-2 text-md text-[#132391]">
           {duration && (
             <span className="flex items-center gap-2">
               <Clock className="h-4 w-4" style={{ color: 'rgba(19, 35, 145, 1)' }} />
@@ -92,22 +94,28 @@ const MyCoursesCard = ({ course }) => {
             <Button
               type="button"
               variant="outline"
-              className="border-[#132391]/30 bg-white px-4 py-2 text-xs text-[#132391] hover:bg-[#132391]/5"
+              className="border-0 bg-white px-4 py-2 text-md hover:bg-[#132391]/5"
             >
-              <span className="font-bold">{daysLabel}</span>
+              <span
+                className="flex items-center gap-2 font-bold"
+                style={{ color: 'rgba(19, 35, 145, 1)' }}
+              >
+                <Unlock className="h-5 w-5" style={{ color: 'rgba(19, 35, 145, 1)' }} />
+                {daysLabel}
+              </span>
             </Button>
           )}
 
           {!daysLabel && tag === 'Curso finalizado' && (
             <div
-              className="flex items-center gap-2 text-xs font-semibold"
+              className="flex items-center gap-2 text-md font-semibold"
               style={{ color: 'rgba(19, 35, 145, 1)' }}
             >
               <span className="inline-flex items-center gap-1">
-                <span className="flex h-5 w-5 items-center justify-center rounded-full border border-current text-[10px]">
-                  🎓
+                <span className="flex h-6 w-6 items-center justify-center">
+                  <img src={certificado} alt="Certificado" className="h-6 w-6" />
                 </span>
-                Curso finalizado
+                <span className="font-bold">Curso finalizado</span>
               </span>
             </div>
           )}
