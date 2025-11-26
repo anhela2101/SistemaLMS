@@ -1,9 +1,12 @@
 import React from 'react'
+import { useNavigate } from 'react-router-dom'
 import { Clock, CirclePlay, ChartColumnBig, Unlock } from 'lucide-react'
 import Button from '../generals/Button'
 import certificado from '../../assets/img/certificado.svg'
 
 const MyCoursesCard = ({ course }) => {
+  const navigate = useNavigate()
+
   if (!course) return null
 
   const {
@@ -46,7 +49,7 @@ const MyCoursesCard = ({ course }) => {
 
           {modulesText && typeof progress === 'number' && (
             <div className="mt-3">
-              
+
               <div className="h-2 w-full overflow-hidden rounded-full bg-white/80">
                 <div
                   className="h-full rounded-full"
@@ -124,6 +127,7 @@ const MyCoursesCard = ({ course }) => {
             <Button
               variant="primary"
               className="ml-auto w-[45%] bg-[#132391] text-xs hover:bg-[#0B1B86] sm:text-sm"
+              onClick={() => navigate(`/course-start/${course.id}`)}
             >
               <span className="font-bold">{cta}</span>
             </Button>

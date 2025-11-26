@@ -12,6 +12,7 @@ import CourseDetailPage from "../pages/CourseDetailPage";
 import CertificatesPage from "../pages/CertificatesPage";
 import PurchasesPage from "../pages/PurchasesPage";
 import MyCoursesPage from "../pages/MyCoursesPage";
+import CourseStart from "../pages/CourseStart";
 
 export const MyRoutes = () => {
   return (
@@ -31,6 +32,7 @@ export const MyRoutes = () => {
             <Route path="my-certificates" element={<CertificatesPage />} />
             <Route path="my-purchases" element={<PurchasesPage />} />
             <Route path="my-courses" element={<MyCoursesPage />} />
+            <Route path="course-start/:courseId" element={<CourseStart />} />
           </Route>
         </Route>
       </Routes>
