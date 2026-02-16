@@ -18,7 +18,7 @@ export const MyRoutes = () => {
   return (
     <Router>
       <Routes>
-        <Route exact path="/" element={<LadingPage />} />
+        <Route exec path="/" element={<LadingPage />} />
         <Route path="/login" element={<LoginPage />} />
         <Route path="/register" element={<RegisterPage />} />
         <Route path="/reset-password" element={<ResetPasswordPage />} />
