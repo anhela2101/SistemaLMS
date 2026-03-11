@@ -112,24 +112,59 @@ const TestimonialCard = ({ data, isActive, onClick }) => {
   );
 };
 
+
 const CourseCard = ({ tag, title, subtitle, level, desc, price, imageUrl }) => (
-  <div className="bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden hover:shadow-2xl transition-all group flex flex-col h-full text-left">
+  <div className="bg-white rounded-[2rem] shadow-lg border border-gray-100 overflow-hidden hover:shadow-2xl transition-all group flex flex-col h-full text-left">
+    {/* Imagen y Etiqueta */}
     <div className="h-52 relative overflow-hidden bg-[#132391]">
-      <img src={imageUrl} alt={title} className="w-full h-full object-cover opacity-60 transition-transform duration-500 group-hover:scale-110" />
-      {tag && <span className="absolute top-4 left-4 bg-[#2DAAAD] text-white text-[10px] font-bold px-3 py-1 rounded-md uppercase tracking-wider">{tag}</span>}
+      <img
+        src={imageUrl}
+        alt={title}
+        className="w-full h-full object-cover opacity-80 transition-transform duration-700 group-hover:scale-110"
+      />
+      {tag && (
+        <span className="absolute top-4 left-4 bg-[#2DAAAD] text-white text-[11px] font-black px-4 py-1.5 rounded-full uppercase tracking-widest font-montserrat shadow-lg">
+          {tag}
+        </span>
+      )}
     </div>
-    <div className="p-6 flex flex-col flex-1">
-      <h3 className="text-xl font-bold text-[#132391] mb-1">{title}</h3>
-      <p className="text-[10px] font-semibold text-gray-400 mb-4 uppercase tracking-widest">{subtitle}</p>
-      <div className="flex gap-4 text-[11px] text-gray-500 mb-5 font-medium">
+
+    {/* Contenido */}
+    <div className="p-8 flex flex-col flex-1">
+      {/* Título: Raleway Bold Azul */}
+      <h3 className="font-raleway text-2xl font-bold text-[#132391] mb-1 tracking-tight">
+        {title}
+      </h3>
+
+      {/* Subtítulo: Montserrat SemiBold */}
+      <p className="font-montserrat text-[10px] font-semibold text-[#2DAAAD] mb-4 uppercase tracking-[0.2em]">
+        {subtitle}
+      </p>
+
+      {/* Info rápida: Montserrat Medium */}
+      <div className="flex gap-4 text-[11px] text-[#132391] mb-6 font-medium font-montserrat opacity-80">
         <span className="flex items-center gap-1.5"><Clock size={14} className="text-[#2DAAAD]" /> 5 horas</span>
         <span className="flex items-center gap-1.5"><Video size={14} className="text-[#2DAAAD]" /> 8 videos</span>
         <span className="flex items-center gap-1.5"><BarChart size={14} className="text-[#2DAAAD]" /> {level}</span>
       </div>
-      <p className="text-gray-600 text-sm mb-6 line-clamp-3 leading-relaxed">{desc}</p>
-      <div className="mt-auto pt-5 border-t border-gray-100 flex justify-between items-center">
-        <button className="text-[#132391] font-bold text-sm flex items-center gap-2 hover:text-[#2DAAAD] transition-colors group/btn">Saber más <CircleArrowOutUpRight size={16} /></button>
-        {price && <span className="text-lg font-black text-[#132391]">{price}</span>}
+
+      {/* Descripción: Montserrat Regular/Medium Azul */}
+      <p className="font-montserrat text-[#132391] text-sm mb-8 line-clamp-3 leading-relaxed font-medium opacity-90">
+        {desc}
+      </p>
+
+      {/* Footer de la Card */}
+      <div className="mt-auto pt-6 border-t border-gray-100 flex justify-between items-center">
+        <button className="font-montserrat text-[#132391] font-extrabold text-sm flex items-center gap-2 hover:text-[#2DAAAD] transition-all group/btn uppercase tracking-wider">
+          Saber más
+          <CircleArrowOutUpRight size={18} className="transition-transform group-hover/btn:-translate-y-1 group-hover/btn:translate-x-1" />
+        </button>
+
+        {price && (
+          <span className="font-montserrat text-xl font-black text-[#132391]">
+            {price}
+          </span>
+        )}
       </div>
     </div>
   </div>
@@ -176,7 +211,7 @@ const LandingPage = () => {
               Cursos online creados por especialistas
             </span>
 
-            <h1 className="font-raleway text-5xl font-bold mt-6 leading-tight">
+            <h1 className="font-raleway text-5xl  mt-6 leading-tight">
               Tu capacitación puede salvar vidas: empieza gratis con REACT® I
             </h1>
 
@@ -208,24 +243,24 @@ const LandingPage = () => {
       {/* --- BENEFICIOS --- */}
       <section className="py-20 bg-gray-50">
         <div className="container mx-auto px-8">
-          <h2 className="text-3xl font-bold text-[#132391] mb-16 text-left font-raleway">
+          <h2 className="text-3xl md:text-4xl font-bold text-[#132391] mb-16 text-center font-raleway mx-auto max-w-4xl">
             Tu desarrollo profesional en salud, en un solo lugar
           </h2>
           <div className="grid md:grid-cols-3 gap-8 text-left">
             <FeatureCard
               icon={<img src={l1} alt="Especialistas" className="w-16 h-16 object-contain" />}
               title="Aprende de especialistas"
-              desc="Contenidos creados por médicos y profesionales con experiencia real."
+              desc="Contenidos creados por médicos y profesionales de la salud con experiencia real en emergencias."
             />
             <FeatureCard
               icon={<img src={l2} alt="Certificados" className="w-16 h-16 object-contain" />}
               title="Certificados con respaldo"
-              desc="Todos los cursos incluyen certificado digital y aval del colegio de médicos."
+              desc="Todos los cursos incluyen certificado digital, y algunos cuentan con aval del colegio de médicos y organizaciones reconocidas."
             />
             <FeatureCard
               icon={<img src={l3} alt="A tu ritmo" className="w-16 h-16 object-contain" />}
               title="Capacitación a tu ritmo"
-              desc="Estudia a tu manera. Retoma clases desde tu celular, tablet o computadora."
+              desc="Estudia a tu manera. Retoma clases en línea desde tu celular, tablet o computadora y avanza según tu propio ritmo."
             />
           </div>
         </div>
@@ -235,7 +270,10 @@ const LandingPage = () => {
       <section className="relative min-h-[600px] flex items-center bg-cover bg-center py-20 overflow-hidden" style={{ backgroundImage: `url(${bgFeatures})` }}>
         <div className="container mx-auto px-8 relative z-10 grid lg:grid-cols-2 gap-12 items-center text-left">
           <div className="text-white">
-            <h2 className="text-4xl lg:text-5xl font-bold leading-tight mb-6 text-left">Características que marcan la diferencia</h2>
+            <h2 className="text-5xl lg:text-7xl font-normal text-white leading-[1.1] mb-8 text-left tracking-tight font-raleway">
+              Características que <br className="hidden lg:block" />
+              marcan la diferencia
+            </h2>
             <p className="text-lg lg:text-xl text-blue-100/90 font-montserrat leading-relaxed max-w-2xl">
               Nuestros cursos están diseñados para ser accesibles, completos y flexibles.
             </p>
@@ -277,9 +315,9 @@ const LandingPage = () => {
           <div className="flex flex-col md:flex-row md:items-end justify-between mb-16 gap-6">
             <div className="max-w-2xl">
               {/* Título en azul */}
-              <h2 className="text-5xl font-extrabold text-[#132391] mb-4 text-left">Nuestro cursos</h2>
+              <h2 className="text-5xl font-bold text-[#132391] mb-4 text-left font-raleway">Nuestro cursos</h2>
               {/* Texto descriptivo principal en azul */}
-              <p className="text-[#132391] text-lg text-left">
+              <p className="text-[#132391] text-lg text-left font-montserrat">
                 Encuentra el curso ideal para tu nivel de experiencia. Desde programas básicos para el
                 público general hasta capacitaciones avanzadas para profesionales de la salud.
               </p>
@@ -299,7 +337,8 @@ const LandingPage = () => {
           </div>
 
           {/* Grid de Cursos - Asegúrate de que el componente CourseCard reciba o use la clase text-[#132391] */}
-          <div className="grid lg:grid-cols-3 md:grid-cols-2 gap-10 text-left text-[#132391]">
+          <div className="font-montserrat grid lg:grid-cols-3 md:grid-cols-2 gap-10 text-left text-[#132391]">
+
             <CourseCard
               tag="Gratuito"
               title="REACT® - I"
@@ -308,7 +347,10 @@ const LandingPage = () => {
               imageUrl="https://images.unsplash.com/photo-1516549655169-df83a0774514?q=80&w=2070"
               desc="Aprende a actuar con seguridad y eficacia en la estabilización temprana de pacientes críticos en ambulancias, empresas, aeropuertos, industrias y eventos masivos."
               textColor="text-[#132391]"
+              titleFont="font-raleway"
+              bodyFont="font-montserrat"
             />
+
             <CourseCard
               title="REACT® - II"
               subtitle="Respuesta efectiva en atención crítica y traslados"
@@ -317,7 +359,10 @@ const LandingPage = () => {
               imageUrl="https://images.unsplash.com/photo-1551601651-2a8555f1a136?q=80&w=2047"
               desc="Prepárate para llevar tus habilidades al siguiente nivel y enfrentar emergencias con mayor precisión, seguridad y liderazgo."
               textColor="text-[#132391]"
+              titleFont="font-raleway"
+              bodyFont="font-montserrat"
             />
+
             <CourseCard
               title="REACT® - III"
               subtitle="Respuesta efectiva en atención crítica y traslados"
@@ -326,7 +371,11 @@ const LandingPage = () => {
               imageUrl="https://images.unsplash.com/photo-1532938911079-1b06ac7ceec7?q=80&w=1932"
               desc="Prepárate para llevar tus habilidades al siguiente nivel y enfrentar emergencias con mayor precisión, seguridad y liderazgo."
               textColor="text-[#132391]"
+              titleFont="font-raleway"
+              bodyFont="font-montserrat"
             />
+
+
           </div>
         </div>
       </section>
@@ -336,14 +385,17 @@ const LandingPage = () => {
         <div className="container mx-auto px-8 relative z-10 flex justify-end text-left">
           <div className="lg:w-1/2 text-left">
             <span className="text-[#2DAAAD] font-bold text-xs uppercase tracking-widest block text-left">Nosotros</span>
-            <h2 className="text-4xl lg:text-5xl font-extrabold text-[#132391] mt-4 mb-8 text-left">Calidad respaldada por nuestra experiencia en salud</h2>
+
+            <h2 className="font-raleway text-4xl lg:text-5xl  text-[#132391] mt-4 mb-8 text-left leading-tight tracking-tight">
+              Calidad respaldada por nuestra experiencia en salud
+            </h2>
             <p className="text-[#132391] text-lg mb-12 text-left">
               Medicina Crítica se distingue por su experiencia y compromiso en la formación de personal capacitado en seguridad y salud ocupacional. Contamos con un equipo multidisciplinario de profesionales altamente calificados, programas actualizados y metodologías de enseñanza efectivas que garantizan una capacitación de calidad.
             </p>
             <div className="flex items-center justify-center gap-12 pt-8 border-t border-gray-200 text-left font-outfit">
 
               <div className="flex flex-col items-center">
-                <span className="text-5xl font-black text-[#132391]">+ 3</span>
+                <span className="text-5xl  text-[#132391]">+ 3</span>
                 <span className="text-[#132391] text-sm font-medium">
                   Años de experiencia
                 </span>
@@ -353,7 +405,7 @@ const LandingPage = () => {
               <div className="h-16 w-[1px] bg-[#132391]"></div>
 
               <div className="flex flex-col items-center">
-                <span className="text-5xl font-black text-[#132391]">100</span>
+                <span className="text-5xl  text-[#132391]">100</span>
                 <span className="text-[#132391] text-sm font-medium">
                   Capacitaciones
                 </span>
@@ -363,7 +415,7 @@ const LandingPage = () => {
               <div className="h-16 w-[1px] bg-[#132391]"></div>
 
               <div className="flex flex-col items-center">
-                <span className="text-5xl font-black text-[#132391]">+ 3</span>
+                <span className="text-5xl  text-[#132391]">+ 3</span>
                 <span className="text-[#132391] text-sm font-medium">
                   Años de experiencia
                 </span>
@@ -377,7 +429,7 @@ const LandingPage = () => {
       {/* --- NAVEGACIÓN (DOTS) --- */}
       <section className="py-20 text-[#132391] overflow-hidden">
         <div className="container mx-auto px-4 text-[#132391]">
-          <h2 className="text-4xl md:text-5xl font-black text-[#132391] mb-16 text-center">
+          <h2 className="font-raleway text-4xl md:text-5xl text-[#132391] mb-16 text-center">
             Experiencias de quienes ya se capacitaron
           </h2>
 
@@ -400,8 +452,8 @@ const LandingPage = () => {
                 key={i}
                 onClick={() => setActiveTestimonial(i)}
                 className={`transition-all duration-300 rounded-full ${activeTestimonial === i
-                    ? 'w-10 h-3 bg-[#2DAAAD]'
-                    : 'w-3 h-3 bg-gray-300'
+                  ? 'w-10 h-3 bg-[#2DAAAD]'
+                  : 'w-3 h-3 bg-gray-300'
                   }`}
               />
             ))}
@@ -439,24 +491,24 @@ const LandingPage = () => {
           <p className="text-[#2DAAAD] font-semibold text-sm mb-6 uppercase">
             INSTRUCTORES
           </p>
-          <h2 className="text-4xl lg:text-5xl font-black text-[#132391] mb-20 text-left">
+          <h2 className="font-raleway text-4xl lg:text-6xl  text-[#132391] mb-20 text-left leading-tight tracking-tight">
             Formación impartida por especialistas en medicina y emergencias
           </h2>
           <div className="grid md:grid-cols-3 gap-16 text-left">
             {[dr1, dr2, dr3].map((img, i) => (
-              <div key={i} className="flex flex-col items-start group">
+              <div key={i} className="flex flex-col items-start group font-montserrat">
                 <img
                   src={img}
                   alt="Instructor"
                   className="w-32 h-32 rounded-full object-cover border-4 border-white shadow-xl group-hover:border-[#2DAAAD] mb-8"
                 />
-                <h3 className="text-2xl font-bold text-[#132391] mb-1">Dr. Yeison Benites</h3>
+                <h3 className="text-2xl font-bold font-montserrat text-[#132391] mb-1">Dr. Yeison Benites</h3>
                 <p className="text-[#2DAAAD] font-semibold text-sm mb-6 uppercase">
                   Médico emergenciólogo
                 </p>
 
                 {/* Texto ahora en azul [#132391] */}
-                <p className="text-[#132391] text-sm leading-relaxed text-left opacity-90">
+                <p className="text-[#132391] text-sm leading-relaxed text-left font-montserrat opacity-90">
                   Médico emergenciólogo y fundador de Medicina Crítica, con experiencia en atención prehospitalaria y gestión de emergencias. Su propósito es formar y acompañar a personas y profesionales para que puedan responder con eficacia y humanidad en los momentos más críticos.
                 </p>
               </div>
@@ -478,12 +530,12 @@ const LandingPage = () => {
         }}
       >
         <div className="container mx-auto px-6 relative z-10 text-center flex flex-col items-center">
-          <h2 className="text-[#132391] text-5xl lg:text-7xl font-black mb-10 text-center">
+          <h2 className="font-raleway text-[#132391] text-5xl lg:text-7xl  mb-10 text-center tracking-tight">
             Certificación con respaldo
           </h2>
 
           {/* Texto ahora en azul [#132391] */}
-          <p className="text-[#132391] text-lg lg:text-xl mb-28 max-w-3xl mx-auto text-center font-medium opacity-90">
+          <p className="font-montserrat text-[#132391] text-lg lg:text-xl mb-28 max-w-4xl mx-auto text-center font-medium leading-relaxed opacity-90">
             Al completar cada curso recibirás un certificado con el respaldo de entidades de salud,
             que validan tu aprendizaje y fortalecen tu trayectoria profesional.
           </p>
