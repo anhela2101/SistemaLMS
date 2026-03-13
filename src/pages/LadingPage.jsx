@@ -36,7 +36,7 @@ import logB from "../assets/img/logB.png";
 // Fondos y secciones
 import bgFeatures from "../assets/img/Banner2.png";
 import medicosExperiencia from "../assets/img/Banner3.png";
-import fondoCurvo from "../assets/img/fondoT.png";
+
 import pieImage from "../assets/img/pie.png";
 
 // Logos de certificación
@@ -55,6 +55,9 @@ import l3 from "../assets/img/l3.png";
 import dr1 from "../assets/img/dr1.webp";
 import dr2 from "../assets/img/dr2.avif";
 import dr3 from "../assets/img/dr3.avif";
+
+
+import olaF from "../assets/img/fondoOla.png";
 
 // Logo instructor
 import logoDrVigo from "../assets/img/parche.jpg";
@@ -157,6 +160,7 @@ const CourseCard = ({ tag, title, subtitle, level, desc, price, imageUrl }) => (
       <div className="mt-auto pt-6 border-t border-gray-100 flex justify-between items-center">
         <button className="font-montserrat text-[#132391] font-extrabold text-sm flex items-center gap-2 hover:text-[#2DAAAD] transition-all group/btn uppercase tracking-wider">
           Saber más
+
           <CircleArrowOutUpRight size={18} className="transition-transform group-hover/btn:-translate-y-1 group-hover/btn:translate-x-1" />
         </button>
 
@@ -521,7 +525,7 @@ const LandingPage = () => {
       <section
         className="w-full relative overflow-hidden flex items-center justify-center text-center"
         style={{
-          backgroundImage: `url(${fondoCurvo})`,
+          backgroundImage: `url(${olaF})`,
           backgroundSize: '100% 100%', // Fondo a tamaño completo
           backgroundPosition: 'center',
           minHeight: '950px',
@@ -554,22 +558,22 @@ const LandingPage = () => {
       </section>
 
 
-
-      {/* --- IMAGEN PIE --- */}
-      <div className="w-full leading-[0] overflow-hidden -mt-1"><img src={pieImage} alt="Pie" className="w-full h-auto object-cover" /></div>
-
-
+      <div className="w-full flex relative z-10 -mt-[2px] -mb-[2px]">
+        <img
+          src={pieImage}
+          alt="Pie"
+          className="w-full h-auto object-cover block"
+        />
+      </div>
 
       {/* --- FOOTER FINAL --- */}
-      {/* --- FOOTER FINAL --- */}
-      <footer className="bg-[#132391] pt-16 pb-12 text-white">
+      {/* El z-20 asegura que, al ser jalado hacia arriba, el footer quede por encima de la imagen tapando cualquier borde extraño */}
+      <footer className="bg-[#132391] pt-16 pb-12 text-white relative z-20">
         <div className="max-w-7xl mx-auto px-6">
-
           {/* Logo */}
           <div className="flex justify-center mb-12">
-            <img src={logB} alt="Logo Medicina Crítica" className="h-20 brightness-0 invert" />
+            <img src={logB} alt="Logo Medicina Crítica" className="h-20 brightness-0 invert block" />
           </div>
-
           {/* Separador */}
           <div className="border-t border-white/20 mb-10"></div>
 
