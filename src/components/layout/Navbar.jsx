@@ -1,7 +1,63 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { Bell, ChevronDown } from 'lucide-react'
+import { supabase } from '../../lib/supabaseClient'
+
+const roleLabels = {
+  admin: 'Administrador',
+  editor: 'Editor',
+  soporte: 'Soporte',
+  support: 'Soporte',
+  student: 'Estudiante',
+}
 
 const Navbar = ({ title = 'Explorar cursos' }) => {
+  const [profile, setProfile] = useState({
+    name: 'Usuario',
+    role: 'Estudiante',
+  })
+
+  useEffect(() => {
+    let isMounted = true
+
+    const loadProfile = async () => {
+      const { data: sessionData } = await supabase.auth.getSession()
+      const user = sessionData.session?.user
+
+      if (!user) return
+
+      const fallbackName = user.user_metadata?.full_name || user.email || 'Usuario'
+      const fallbackRole = user.user_metadata?.role || 'student'
+
+      const { data } = await supabase
+        .from('users')
+        .select('full_name, email, role')
+        .eq('id', user.id)
+        .maybeSingle()
+
+      if (!isMounted) return
+
+      const role = data?.role || fallbackRole
+
+      setProfile({
+        name: data?.full_name || fallbackName,
+        role: roleLabels[role] || role,
+      })
+    }
+
+    loadProfile()
+
+    const { data: listener } = supabase.auth.onAuthStateChange(() => {
+      loadProfile()
+    })
+
+    return () => {
+      isMounted = false
+      listener.subscription.unsubscribe()
+    }
+  }, [])
+
+  const profileInitial = profile.name.trim().charAt(0).toUpperCase() || 'U'
+
   return (
     <header className="flex items-center justify-between gap-4 px-6 py-5 bg-white ">
       <div>
@@ -23,14 +79,14 @@ const Navbar = ({ title = 'Explorar cursos' }) => {
           className="flex items-center gap-3 rounded-full border border-[#132391]/20 px-3 py-2 text-sm font-semibold text-[#132391] hover:bg-[#132391]/5 transition-colors"
         >
           <span className="flex h-9 w-9 items-center justify-center rounded-full bg-[#132391] text-white font-medium">
-            M
+            {profileInitial}
           </span>
           <div className="text-left">
-            <p className="text-sm font-semibold">María Pérez</p>
-            <p className="text-xs text-[#132391]/70">Coordinadora</p>
+            <p className="text-sm font-semibold">{profile.name}</p>
+            <p className="text-xs text-[#132391]/70">{profile.role}</p>
           </div>
           <ChevronDown className="w-4 h-4" />
-          <span className="sr-only">Abrir menú de usuario</span>
+          <span className="sr-only">Abrir menu de usuario</span>
         </button>
       </div>
     </header>
@@ -38,4 +94,3 @@ const Navbar = ({ title = 'Explorar cursos' }) => {
 }
 
 export default Navbar
-
