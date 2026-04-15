@@ -1,69 +1,75 @@
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useState } from 'react'
 import { Eye, EyeOff, CircleArrowOutUpRight, Loader2 } from 'lucide-react'
 import loginImage from '../assets/img/login.jpg'
 import logoBlanco from '../assets/img/LogoBlanco.png'
 import Input from '../components/generals/Input'
 import Button from '../components/generals/Button'
 import { useNavigate } from 'react-router-dom'
-import Cookies from "js-cookie";
+import { supabase } from '../lib/supabaseClient'
 
 const LoginPage = () => {
   const [showPassword, setShowPassword] = useState(false)
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [isLoading, setIsLoading] = useState(false)
+  const [authError, setAuthError] = useState('')
 
   const navigate = useNavigate()
-  const loginTimeoutRef = useRef(null)
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault()
     if (isLoading) return
 
     setIsLoading(true)
+    setAuthError('')
 
-    loginTimeoutRef.current = setTimeout(() => {
-      Cookies.set('sesion', 'true')
+    const { error } = await supabase.auth.signInWithPassword({
+      email,
+      password,
+    })
+
+    if (error) {
+      setAuthError(error.message || 'No pudimos iniciar sesion. Revisa tus datos.')
       setIsLoading(false)
-      navigate('/home')
-    }, 1500)
-  }
-
-  const handleGoogleLogin = () => {
-    // Aquí va la lógica de login con Google
-    console.log('Google login')
-  }
-
-  useEffect(() => {
-    return () => {
-      if (loginTimeoutRef.current) {
-        clearTimeout(loginTimeoutRef.current)
-      }
+      return
     }
-  }, [])
+
+    setIsLoading(false)
+    navigate('/home')
+  }
+
+  const handleGoogleLogin = async () => {
+    setAuthError('')
+
+    const { error } = await supabase.auth.signInWithOAuth({
+      provider: 'google',
+      options: {
+        redirectTo: `${window.location.origin}/home`,
+      },
+    })
+
+    if (error) {
+      setAuthError(error.message || 'No pudimos iniciar sesion con Google.')
+    }
+  }
 
   return (
     <div className="flex min-h-screen ">
-      {/* Lado izquierdo - Imagen de fondo con logo */}
       <div className="hidden lg:flex lg:w-1/2 relative overflow-hidden">
-        {/* Imagen de fondo */}
-        <img 
-          src={loginImage} 
-          alt="Medicina Crítica" 
+        <img
+          src={loginImage}
+          alt="Medicina Critica"
           className="absolute inset-0 w-full h-full object-cover"
         />
-        
-        {/* Overlay azul transparente */}
+
         <div className="absolute inset-0 bg-indigo-700/60"></div>
-        
-        {/* Logo y texto */}
+
         <div className="relative z-10 flex flex-col items-center justify-center w-full p-12">
           <div className="flex items-center gap-3 mb-2">
-            {/* Icono de personas */}
             <div className="flex items-center">
-              <img 
-                src={logoBlanco} 
-                alt="Logo Medicina Crítica" 
+              <img
+                src={logoBlanco}
+                alt="Logo Medicina Critica"
                 className="w-80 h-80 object-contain"
               />
             </div>
@@ -71,40 +77,42 @@ const LoginPage = () => {
         </div>
       </div>
 
-      {/* Lado derecho - Formulario */}
       <div className="flex-1 flex items-center justify-center p-8 bg-gray-50">
         <div className="w-full max-w-md">
-          {/* Enlace de registro */}
           <div className="text-right mb-8">
-            <span className="text-gray-600">¿No tienes una cuenta? </span>
+            <span className="text-gray-600">No tienes una cuenta? </span>
             <a href="/register" className="text-indigo-600 font-semibold hover:text-indigo-700">
-              Regístrate
+              Registrate
             </a>
           </div>
 
-          {/* Título */}
-          <h2 className="text-3xl font-bold text-indigo-900 mb-8">Iniciar sesión</h2>
+          <h2 className="text-3xl font-bold text-indigo-900 mb-8">Iniciar sesion</h2>
 
-          {/* Formulario */}
           <form onSubmit={handleSubmit} className="space-y-6">
-            {/* Campo de correo electrónico */}
+            {authError && (
+              <div className="rounded-md border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700">
+                {authError}
+              </div>
+            )}
+
             <Input
               id="email"
               type="email"
-              label="Correo electrónico"
+              label="Correo electronico"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
+              disabled={isLoading}
               required
               containerClassName="mb-4"
             />
 
-            {/* Campo de contraseña */}
             <Input
               id="password"
               type={showPassword ? 'text' : 'password'}
-              label="Contraseña"
+              label="Contrasena"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
+              disabled={isLoading}
               required
               iconRight={
                 <button
@@ -122,15 +130,13 @@ const LoginPage = () => {
               containerClassName="mb-4"
             />
 
-            {/* Olvidaste contraseña */}
             <div className="text-center">
-              <span className="text-gray-600 text-sm">¿Olvidaste tu contraseña? </span>
+              <span className="text-gray-600 text-sm">Olvidaste tu contrasena? </span>
               <a href="/reset-password" className="text-indigo-600 text-sm font-semibold hover:text-indigo-700">
-                Haz click aquí
+                Haz click aqui
               </a>
             </div>
 
-            {/* Botón de inicio de sesión */}
             <Button
               type="submit"
               variant="primary"
@@ -140,26 +146,25 @@ const LoginPage = () => {
               {isLoading ? (
                 <>
                   <Loader2 className="w-5 h-5 animate-spin" />
-                  Iniciando sesión...
+                  Iniciando sesion...
                 </>
               ) : (
                 <>
-                  Iniciar sesión
+                  Iniciar sesion
                   <CircleArrowOutUpRight className="w-5 h-5" />
                 </>
               )}
             </Button>
           </form>
 
-          {/* Separador */}
           <div className="mt-8 mb-6">
             <p className="text-center text-gray-600 text-sm">Ingresar con</p>
           </div>
 
-          {/* Botón de Google */}
           <Button
             onClick={handleGoogleLogin}
-            className="w-full flex items-center justify-center gap-3 px-4 py-3  hover:bg-gray-50 transition-colors"
+            className="w-full flex items-center justify-center gap-3 px-4 py-3 hover:bg-gray-50 transition-colors"
+            disabled={isLoading}
           >
             <svg className="w-8 h-8" viewBox="0 0 24 24">
               <path
