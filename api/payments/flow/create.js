@@ -96,12 +96,6 @@ export default async function handler(req, res) {
 
   const optionalPayload = {
     paymentId: pendingPayment.id,
-    courseId: course.id,
-    userId: authData.user.id,
-    userEmail: profile?.email || authData.user.email,
-    userFullName: profile?.full_name || authData.user.user_metadata?.full_name || null,
-    userPhone: profile?.phone_international || null,
-    courseTitle: course.title,
   }
 
   try {
