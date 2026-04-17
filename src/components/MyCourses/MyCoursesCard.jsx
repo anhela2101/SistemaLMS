@@ -21,35 +21,31 @@ const MyCoursesCard = ({ course }) => {
     tag,
     tagColor,
     daysLabel,
-    cta
+    cta,
+    actionPath,
   } = course
 
   return (
-    <article className="rounded-lg border border-[#132391]/20 bg-white shadow-sm transition-shadow hover:shadow-lg hover:border-[#132391]/40">
+    <article className="rounded-lg border border-[#132391]/20 bg-white shadow-sm transition-shadow hover:border-[#132391]/40 hover:shadow-lg">
       <div className="relative h-44 overflow-hidden rounded-t-lg">
-        <img
-          src={image}
-          alt={title}
-          className="h-full w-full object-cover"
-        />
+        <img src={image} alt={title} className="h-full w-full object-cover" />
         <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/40 to-transparent" />
 
-        {tag && (
+        {tag ? (
           <span
             className="absolute top-0 left-0 rounded-br-xl px-4 py-2 text-sm font-bold text-white"
             style={{ backgroundColor: tagColor || 'rgba(19, 35, 145, 1)' }}
           >
             {tag}
           </span>
-        )}
+        ) : null}
 
         <div className="absolute inset-x-4 bottom-4 text-white">
           <h3 className="text-lg font-bold">{title}</h3>
           <p className="text-sm text-white/80">{description}</p>
 
-          {modulesText && typeof progress === 'number' && (
+          {modulesText && typeof progress === 'number' ? (
             <div className="mt-3">
-
               <div className="h-2 w-full overflow-hidden rounded-full bg-white/80">
                 <div
                   className="h-full rounded-full"
@@ -61,59 +57,48 @@ const MyCoursesCard = ({ course }) => {
                 <span>{progress}%</span>
               </div>
             </div>
-          )}
+          ) : null}
         </div>
       </div>
 
       <div className="space-y-4 px-6 py-6">
         <div className="flex flex-wrap justify-between gap-x-6 gap-y-2 text-md text-[#132391]">
-          {duration && (
+          {duration ? (
             <span className="flex items-center gap-2">
-              <Clock className="h-4 w-4" style={{ color: 'rgba(19, 35, 145, 1)' }} />
+              <Clock className="h-4 w-4" />
               {duration}
             </span>
-          )}
-          {lessons && (
+          ) : null}
+          {lessons ? (
             <span className="flex items-center gap-2">
-              <CirclePlay className="h-4 w-4" style={{ color: 'rgba(19, 35, 145, 1)' }} />
+              <CirclePlay className="h-4 w-4" />
               {lessons}
             </span>
-          )}
-          {level && (
+          ) : null}
+          {level ? (
             <span className="flex items-center gap-2">
-              <ChartColumnBig className="h-4 w-4" style={{ color: 'rgba(19, 35, 145, 1)' }} />
+              <ChartColumnBig className="h-4 w-4" />
               {level}
             </span>
-          )}
+          ) : null}
         </div>
 
-        <p className="text-sm" style={{ color: 'rgba(19, 35, 145, 1)' }}>
-          Prepárate para llevar tus habilidades al siguiente nivel y enfrentar emergencias con mayor precisión,
-          seguridad y liderazgo.
+        <p className="text-sm text-[#132391]">
+          Sigue tu avance, vuelve al contenido cuando lo necesites y consulta el estado de tu acceso desde tu cuenta.
         </p>
 
         <div className="flex flex-wrap items-end justify-between gap-4 sm:flex-nowrap">
-          {daysLabel && (
-            <Button
-              type="button"
-              variant="outline"
-              className="border-0 bg-white px-4 py-2 text-md hover:bg-[#132391]/5"
-            >
-              <span
-                className="flex items-center gap-2 font-bold"
-                style={{ color: 'rgba(19, 35, 145, 1)' }}
-              >
-                <Unlock className="h-5 w-5" style={{ color: 'rgba(19, 35, 145, 1)' }} />
+          {daysLabel ? (
+            <Button type="button" variant="outline" className="border-0 bg-white px-4 py-2 text-md hover:bg-[#132391]/5">
+              <span className="flex items-center gap-2 font-bold text-[#132391]">
+                <Unlock className="h-5 w-5" />
                 {daysLabel}
               </span>
             </Button>
-          )}
+          ) : null}
 
-          {!daysLabel && tag === 'Curso finalizado' && (
-            <div
-              className="flex items-center gap-2 text-md font-semibold"
-              style={{ color: 'rgba(19, 35, 145, 1)' }}
-            >
+          {!daysLabel && tag === 'Curso finalizado' ? (
+            <div className="flex items-center gap-2 text-md font-semibold text-[#132391]">
               <span className="inline-flex items-center gap-1">
                 <span className="flex h-6 w-6 items-center justify-center">
                   <img src={certificado} alt="Certificado" className="h-6 w-6" />
@@ -121,17 +106,17 @@ const MyCoursesCard = ({ course }) => {
                 <span className="font-bold">Curso finalizado</span>
               </span>
             </div>
-          )}
+          ) : null}
 
-          {cta && (
+          {cta ? (
             <Button
               variant="primary"
               className="ml-auto w-[45%] bg-[#132391] text-xs hover:bg-[#0B1B86] sm:text-sm"
-              onClick={() => navigate(`/course-start/${course.id}`)}
+              onClick={() => navigate(actionPath || `/course-start/${course.id}`)}
             >
               <span className="font-bold">{cta}</span>
             </Button>
-          )}
+          ) : null}
         </div>
       </div>
     </article>
