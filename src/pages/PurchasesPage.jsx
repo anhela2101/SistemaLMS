@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react'
-import { FileText, Eye, Download } from 'lucide-react'
+import { FileText, Eye, Download, X } from 'lucide-react'
 import { useLocation } from 'react-router-dom'
 import { loadMyPurchases } from '../lib/lmsData'
 
@@ -27,6 +27,7 @@ const PurchasesPage = () => {
   const [purchases, setPurchases] = useState([])
   const [loading, setLoading] = useState(true)
   const [errorMessage, setErrorMessage] = useState('')
+  const [selectedPurchase, setSelectedPurchase] = useState(null)
 
   const flowStatusNotice = useMemo(() => {
     const params = new URLSearchParams(location.search)
@@ -65,6 +66,13 @@ const PurchasesPage = () => {
   if (loading) {
     return <div className="text-sm text-gray-500">Cargando compras...</div>
   }
+
+  const getReceiptUrl = (purchase) => {
+    if (!purchase) return null
+    return purchase.payload?.receiptUrl || purchase.payload?.paymentData?.receiptUrl || null
+  }
+
+  const canOpenCheckout = (purchase) => purchase?.status === 'Pendiente' && Boolean(purchase.checkoutUrl)
 
   return (
     <div className="space-y-4">
@@ -110,14 +118,8 @@ const PurchasesPage = () => {
                 <button
                   type="button"
                   className="flex items-center justify-center rounded-full p-2 transition-colors hover:bg-[#F0F4FF] disabled:cursor-not-allowed disabled:opacity-40"
-                  aria-label="Ver comprobante"
-                  onClick={() => {
-                    const targetUrl = purchase.checkoutUrl || purchase.payload?.receiptUrl || null
-                    if (targetUrl) {
-                      window.open(targetUrl, '_blank', 'noopener,noreferrer')
-                    }
-                  }}
-                  disabled={!purchase.checkoutUrl && !purchase.payload?.receiptUrl}
+                  aria-label="Ver detalle de compra"
+                  onClick={() => setSelectedPurchase(purchase)}
                 >
                   <Eye className="w-5 h-5" />
                 </button>
@@ -127,12 +129,12 @@ const PurchasesPage = () => {
                   className="flex items-center justify-center rounded-full p-2 transition-colors hover:bg-[#F0F4FF] disabled:cursor-not-allowed disabled:opacity-40"
                   aria-label="Descargar comprobante"
                   onClick={() => {
-                    const targetUrl = purchase.checkoutUrl || purchase.payload?.receiptUrl || null
+                    const targetUrl = getReceiptUrl(purchase)
                     if (targetUrl) {
                       window.open(targetUrl, '_blank', 'noopener,noreferrer')
                     }
                   }}
-                  disabled={!purchase.checkoutUrl && !purchase.payload?.receiptUrl}
+                  disabled={!getReceiptUrl(purchase)}
                 >
                   <Download className="w-5 h-5" />
                 </button>
@@ -141,6 +143,110 @@ const PurchasesPage = () => {
           </div>
         ))
       )}
+
+      {selectedPurchase ? (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/40 p-4 backdrop-blur-sm">
+          <div className="w-full max-w-lg rounded-2xl bg-white shadow-2xl">
+            <div className="flex items-start justify-between border-b border-gray-100 px-6 py-5">
+              <div>
+                <h2 className="text-lg font-extrabold text-[#132391]">Detalle de compra</h2>
+                <p className="text-xs font-semibold text-gray-400">{selectedPurchase.title}</p>
+              </div>
+              <button
+                type="button"
+                onClick={() => setSelectedPurchase(null)}
+                className="text-gray-400 transition-colors hover:text-gray-700"
+                aria-label="Cerrar detalle"
+              >
+                <X className="h-5 w-5" />
+              </button>
+            </div>
+
+            <div className="space-y-4 px-6 py-6 text-sm">
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <p className="text-[11px] font-black uppercase tracking-widest text-gray-400">Operacion</p>
+                  <p className="mt-1 font-bold text-gray-800">{selectedPurchase.voucher}</p>
+                </div>
+                <div>
+                  <p className="text-[11px] font-black uppercase tracking-widest text-gray-400">Estado</p>
+                  <p className="mt-1 font-bold text-gray-800">{selectedPurchase.status}</p>
+                </div>
+                <div>
+                  <p className="text-[11px] font-black uppercase tracking-widest text-gray-400">Fecha</p>
+                  <p className="mt-1 font-bold text-gray-800">{selectedPurchase.date}</p>
+                </div>
+                <div>
+                  <p className="text-[11px] font-black uppercase tracking-widest text-gray-400">Monto</p>
+                  <p className="mt-1 font-bold text-gray-800">{selectedPurchase.amount}</p>
+                </div>
+              </div>
+
+              {selectedPurchase.payload?.paymentData ? (
+                <div className="rounded-xl border border-gray-100 bg-gray-50 p-4">
+                  <p className="mb-3 text-[11px] font-black uppercase tracking-widest text-gray-400">Pago confirmado</p>
+                  <div className="grid grid-cols-2 gap-3 text-sm">
+                    <div>
+                      <p className="text-gray-400">Medio</p>
+                      <p className="font-bold text-gray-800">{selectedPurchase.payload.paymentData.media || 'No informado'}</p>
+                    </div>
+                    <div>
+                      <p className="text-gray-400">Fecha Flow</p>
+                      <p className="font-bold text-gray-800">{selectedPurchase.payload.paymentData.date || 'No informada'}</p>
+                    </div>
+                  </div>
+                </div>
+              ) : null}
+
+              {selectedPurchase.payload?.pendingInfo ? (
+                <div className="rounded-xl border border-amber-100 bg-amber-50 p-4">
+                  <p className="mb-3 text-[11px] font-black uppercase tracking-widest text-amber-700">Pago pendiente</p>
+                  <div className="grid grid-cols-2 gap-3 text-sm">
+                    <div>
+                      <p className="text-amber-700/70">Medio</p>
+                      <p className="font-bold text-amber-900">{selectedPurchase.payload.pendingInfo.media || 'No informado'}</p>
+                    </div>
+                    <div>
+                      <p className="text-amber-700/70">Fecha limite</p>
+                      <p className="font-bold text-amber-900">{selectedPurchase.payload.pendingInfo.date || 'No informada'}</p>
+                    </div>
+                  </div>
+                </div>
+              ) : null}
+            </div>
+
+            <div className="flex justify-end gap-3 border-t border-gray-100 px-6 py-5">
+              {canOpenCheckout(selectedPurchase) ? (
+                <button
+                  type="button"
+                  onClick={() => window.open(selectedPurchase.checkoutUrl, '_blank', 'noopener,noreferrer')}
+                  className="rounded-lg bg-[#132391] px-4 py-2 text-sm font-bold text-white hover:bg-[#0B1B86]"
+                >
+                  Continuar pago
+                </button>
+              ) : null}
+
+              {getReceiptUrl(selectedPurchase) ? (
+                <button
+                  type="button"
+                  onClick={() => window.open(getReceiptUrl(selectedPurchase), '_blank', 'noopener,noreferrer')}
+                  className="rounded-lg border border-[#132391]/20 px-4 py-2 text-sm font-bold text-[#132391] hover:bg-[#F0F4FF]"
+                >
+                  Descargar comprobante
+                </button>
+              ) : null}
+
+              <button
+                type="button"
+                onClick={() => setSelectedPurchase(null)}
+                className="rounded-lg border border-gray-200 px-4 py-2 text-sm font-bold text-gray-600 hover:bg-gray-50"
+              >
+                Cerrar
+              </button>
+            </div>
+          </div>
+        </div>
+      ) : null}
     </div>
   )
 }
