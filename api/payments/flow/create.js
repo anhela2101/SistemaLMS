@@ -77,6 +77,10 @@ export default async function handler(req, res) {
       payload: {
         createdFrom: 'lms_user_checkout',
         requestedPaymentMethod: Number(paymentMethod || 9),
+        userEmail: profile?.email || authData.user.email,
+        userFullName: profile?.full_name || authData.user.user_metadata?.full_name || null,
+        userPhone: profile?.phone_international || null,
+        courseTitle: course.title,
       },
     })
     .select('id')
@@ -90,6 +94,16 @@ export default async function handler(req, res) {
   const origin = getRequestOrigin(req)
   const { apiKey } = getFlowConfig()
 
+  const optionalPayload = {
+    paymentId: pendingPayment.id,
+    courseId: course.id,
+    userId: authData.user.id,
+    userEmail: profile?.email || authData.user.email,
+    userFullName: profile?.full_name || authData.user.user_metadata?.full_name || null,
+    userPhone: profile?.phone_international || null,
+    courseTitle: course.title,
+  }
+
   try {
     const flowResponse = await flowPost('/payment/create', {
       apiKey,
@@ -101,11 +115,7 @@ export default async function handler(req, res) {
       paymentMethod: Number(paymentMethod || 9),
       urlConfirmation: `${origin}/api/payments/flow/confirm`,
       urlReturn: `${origin}/api/payments/flow/return`,
-      optional: JSON.stringify({
-        paymentId: pendingPayment.id,
-        courseId: course.id,
-        userId: authData.user.id,
-      }),
+      optional: JSON.stringify(optionalPayload),
       payment_currency: 'PEN',
     })
 
@@ -118,10 +128,15 @@ export default async function handler(req, res) {
         payload: {
           createdFrom: 'lms_user_checkout',
           requestedPaymentMethod: Number(paymentMethod || 9),
+          userEmail: profile?.email || authData.user.email,
+          userFullName: profile?.full_name || authData.user.user_metadata?.full_name || null,
+          userPhone: profile?.phone_international || null,
+          courseTitle: course.title,
           flowOrder: flowResponse.flowOrder,
           flowToken: flowResponse.token,
           checkoutUrl,
           commerceOrder,
+          optional: optionalPayload,
         },
       })
       .eq('id', pendingPayment.id)
@@ -145,8 +160,13 @@ export default async function handler(req, res) {
         payload: {
           createdFrom: 'lms_user_checkout',
           requestedPaymentMethod: Number(paymentMethod || 9),
+          userEmail: profile?.email || authData.user.email,
+          userFullName: profile?.full_name || authData.user.user_metadata?.full_name || null,
+          userPhone: profile?.phone_international || null,
+          courseTitle: course.title,
           flowError: error.details || error.message,
           commerceOrder,
+          optional: optionalPayload,
         },
       })
       .eq('id', pendingPayment.id)
