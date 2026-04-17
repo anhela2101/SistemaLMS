@@ -1,162 +1,290 @@
-import React from 'react'
-import { useLocation } from 'react-router-dom'
-import { Play, Youtube, Clock, Video, Users, FileCheck, Download, MonitorPlay, Award, ShieldCheck, Star, StarHalf, CircleArrowOutUpRight, MoveUpRight, Calendar, FileDown, FilePenLine, CircleCheck } from 'lucide-react'
-import Button from '../components/generals/Button'
+import React, { useEffect, useState } from 'react'
+import { useNavigate, useParams } from 'react-router-dom'
+import {
+  Clock,
+  Video,
+  Users,
+  ShieldCheck,
+  Award,
+  CircleCheck,
+  Calendar,
+  FileDown,
+  FilePenLine,
+  Youtube,
+  Loader2,
+} from 'lucide-react'
 import PaymentMethod from '../components/courseDetails/paymentMethod'
 import FreeMethod from '../components/courseDetails/freeMethod'
-
-const includedItems = [
-  { label: 'Clases en video disponibles 24/7', icon: Youtube },
-  { label: 'Acceso al curso por 30 días', icon: Calendar },
-  { label: 'Material descargable', icon: FileDown },
-  { label: 'Certificado digital inmediato', icon: Award },
-  { label: 'Examen online', icon: FilePenLine }
-]
+import { createFlowCheckout, createFreeEnrollment, loadCourseDetail } from '../lib/lmsData'
 
 const endorsements = [
   'Centro de Entrenamiento Internacional Dr. Vigo RCP',
-  'MEDCRI – Centro de Entrenamiento Internacional'
+  'MEDCRI - Centro de Entrenamiento Internacional',
 ]
 
-
 const CourseDetailPage = () => {
-  const location = useLocation()
-  const tag = location?.state?.tag
+  const navigate = useNavigate()
+  const { courseId } = useParams()
+  const [detail, setDetail] = useState(null)
+  const [loading, setLoading] = useState(true)
+  const [actionLoading, setActionLoading] = useState(false)
+  const [errorMessage, setErrorMessage] = useState('')
 
-  const isFree = tag === 'Gratuito'
+  useEffect(() => {
+    let isMounted = true
+
+    const fetchDetail = async () => {
+      setLoading(true)
+      setErrorMessage('')
+
+      try {
+        const data = await loadCourseDetail(courseId)
+        if (isMounted) {
+          setDetail(data)
+        }
+      } catch (error) {
+        if (isMounted) {
+          setErrorMessage(error.message || 'No se pudo cargar el curso.')
+        }
+      } finally {
+        if (isMounted) {
+          setLoading(false)
+        }
+      }
+    }
+
+    fetchDetail()
+
+    return () => {
+      isMounted = false
+    }
+  }, [courseId])
+
+  const refreshDetail = async () => {
+    const data = await loadCourseDetail(courseId)
+    setDetail(data)
+  }
+
+  const handleFreeStart = async () => {
+    if (!detail) return
+
+    if (detail.action?.action === 'start') {
+      navigate(`/course-start/${detail.course.id}`)
+      return
+    }
+
+    if (detail.action?.action === 'certificates') {
+      navigate('/my-certificates')
+      return
+    }
+
+    setActionLoading(true)
+    setErrorMessage('')
+
+    try {
+      await createFreeEnrollment(detail.course.id)
+      navigate(`/course-start/${detail.course.id}`)
+    } catch (error) {
+      setErrorMessage(error.message || 'No se pudo activar el curso gratuito.')
+    } finally {
+      setActionLoading(false)
+    }
+  }
+
+  const handlePaidCheckout = async (paymentMethod) => {
+    if (!detail) return
+
+    if (detail.action?.action === 'start') {
+      navigate(`/course-start/${detail.course.id}`)
+      return
+    }
+
+    if (detail.action?.action === 'certificates') {
+      navigate('/my-certificates')
+      return
+    }
+
+    if (detail.action?.action === 'purchases') {
+      navigate('/my-purchases')
+      return
+    }
+
+    setActionLoading(true)
+    setErrorMessage('')
+
+    try {
+      const payload = await createFlowCheckout({
+        courseId: detail.course.id,
+        paymentMethod,
+      })
+
+      window.location.assign(payload.checkoutUrl)
+    } catch (error) {
+      setErrorMessage(error.message || 'No se pudo iniciar el pago con Flow.')
+      await refreshDetail()
+      setActionLoading(false)
+    }
+  }
+
+  if (loading) {
+    return (
+      <div className="flex min-h-[320px] items-center justify-center text-sm text-gray-500">
+        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+        Cargando curso...
+      </div>
+    )
+  }
+
+  if (errorMessage && !detail) {
+    return (
+      <div className="rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+        {errorMessage}
+      </div>
+    )
+  }
+
+  if (!detail) {
+    return (
+      <div className="rounded-lg border border-[#132391]/15 bg-white px-4 py-3 text-sm text-gray-500">
+        Curso no disponible.
+      </div>
+    )
+  }
+
+  const { course, lessonCount, firstLesson } = detail
+  const isFree = course.course_type === 'free'
+  const paidStatusLabel = detail.latestPayment?.status === 'pending' ? 'Tienes un pago pendiente para este curso.' : null
 
   return (
     <div className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_360px]">
       <section className="space-y-6">
         <header className="space-y-3">
           <div>
-            <h1 className="text-3xl font-bold text-[#0B1B86] uppercase">REACT® – I</h1>
-            <p className="text-lg text-[#132391]/80">Respuesta Efectiva en Atención Crítica y Traslados</p>
+            <h1 className="text-3xl font-bold uppercase text-[#0B1B86]">{course.title}</h1>
+            <p className="text-lg text-[#132391]/80">{course.description}</p>
           </div>
 
-          <div className="overflow-hidden rounded-3xl bg-black">
+          <div className="overflow-hidden rounded-lg bg-black">
             <div className="relative h-72 w-full">
-              <video
-                className="h-full w-full object-cover"
-                controls
-                poster="https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?auto=format&fit=crop&w=1200&q=60"
-              >
-                <source src="https://storage.googleapis.com/coverr-main/mp4/Mt_Baker.mp4" type="video/mp4" />
-                Tu navegador no soporta la reproducción de video.
-              </video>
+              {firstLesson?.bunny_video_url ? (
+                <video
+                  className="h-full w-full object-cover"
+                  controls
+                  poster={detail.image}
+                >
+                  <source src={firstLesson.bunny_video_url} type="video/mp4" />
+                  Tu navegador no soporta la reproduccion de video.
+                </video>
+              ) : (
+                <img src={detail.image} alt={course.title} className="h-full w-full object-cover" />
+              )}
               <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/30 to-transparent" />
             </div>
           </div>
 
-          <div className="flex justify-between items-center text-sm text-[#132391] w-full gap-4 flex-wrap sm:flex-nowrap">
+          <div className="flex w-full flex-wrap items-center justify-between gap-4 text-sm text-[#132391] sm:flex-nowrap">
             <span className="flex items-center gap-2">
               <Clock className="w-4 h-4" />
-              5 horas
+              {course.access_duration_days} dias acceso
             </span>
             <span className="flex items-center gap-2">
               <Video className="w-4 h-4" />
-              8 videos
+              {lessonCount} {lessonCount === 1 ? 'leccion' : 'lecciones'}
             </span>
             <span className="flex items-center gap-2">
               <ShieldCheck className="w-4 h-4" />
-              Básico
+              {course.level || 'General'}
             </span>
             <span className="flex items-center gap-2">
               <Users className="w-4 h-4" />
-              88 profesionales de la salud
+              {detail.enrollment ? 'Acceso activo' : 'Disponible'}
             </span>
           </div>
         </header>
 
-        <article className="space-y-6 rounded-3xl bg-white p-8 shadow-sm">
+        <article className="space-y-6 rounded-lg bg-white p-8 shadow-sm">
+          {errorMessage ? (
+            <div className="rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+              {errorMessage}
+            </div>
+          ) : null}
+
           <p className="text-base text-gray-600">
-            Este curso está diseñado para todos los profesionales de la salud que intervienen en la primera respuesta, sin importar su profesión,
-            especialidad o nivel previo de experiencia.
+            Este curso fue publicado desde el panel administrativo y su contenido se sirve desde Supabase para la experiencia del alumno.
           </p>
 
-          <div className="space-y-4 text-sm text-gray-700">
-            <div>
-              <h3 className="text-base font-semibold text-[#0B1B86]">Instructor:</h3>
-              <p>Dr. Yeison Benites Silva</p>
-              <p>Médico Emergenciólogo – CEO Medicina Crítica</p>
-              <p>Máster en Cuidados Críticos y Cardiovasculares</p>
-            </div>
-
-            <div className="space-y-2">
-              <h3 className="text-base font-semibold text-[#0B1B86]">Objetivos del Curso</h3>
-              <ul className="list-disc space-y-2 pl-5">
-                <li>Brindar al personal de salud conocimientos y herramientas fundamentales para la atención crítica en el entorno prehospitalario.</li>
-                <li>Fortalecer la toma de decisiones rápidas y seguras en situaciones de emergencia.</li>
-                <li>Capacitar en principios de traslado asistido y manejo inicial de pacientes críticos.</li>
-                <li>Promover la actuación coordinada y segura del equipo prehospitalario ante eventos agudos.</li>
-              </ul>
-            </div>
-
-            <div className="space-y-2">
-              <h3 className="text-base font-semibold text-[#0B1B86]">Lo que aprenderás</h3>
-              <ul className="list-disc space-y-2 pl-5">
-                <li>Evaluación primaria y secundaria del paciente crítico.</li>
-                <li>Manejo de la vía aérea y ventilación básica.</li>
-                <li>Reanimación cardiopulmonar prehospitalaria.</li>
-                <li>Principios de traslado seguro en ambulancia.</li>
-                <li>Abordaje inicial de traumatismos y emergencias médicas.</li>
-                <li>Rol del equipo de atención durante traslados.</li>
-                <li>Comunicación efectiva y coordinación con el centro de referencia.</li>
-              </ul>
-            </div>
-
-            <div className="space-y-2">
-              <h3 className="text-base font-semibold text-[#0B1B86]">Virtudes del Curso</h3>
-              <ul className="list-disc space-y-2 pl-5">
-                <li>Enfoque práctico y clínico adaptado a la realidad del trabajo prehospitalario.</li>
-                <li>Instructores con experiencia real en campo crítico y emergencias.</li>
-                <li>Médicos especialistas – Emergenciólogos, intensivistas.</li>
-                <li>Contenido estructurado por niveles de complejidad (REACT I, II, III).</li>
-                <li>Certificación respaldada por instituciones reconocidas.</li>
-                <li>Preparación para escenarios reales de vida o muerte.</li>
-              </ul>
-            </div>
+          <div className="space-y-2">
+            <h3 className="text-base font-semibold text-[#0B1B86]">Modulos del curso</h3>
+            <ul className="space-y-2 text-sm text-gray-700">
+              {detail.modulesWithLessons.map((module) => (
+                <li key={module.id} className="rounded-lg border border-[#132391]/10 px-4 py-3">
+                  <p className="font-semibold text-[#132391]">{module.title}</p>
+                  <p className="text-xs text-gray-500">
+                    {module.lessons.length} {module.lessons.length === 1 ? 'leccion' : 'lecciones'}
+                  </p>
+                  {module.description ? <p className="mt-2 text-sm text-gray-600">{module.description}</p> : null}
+                </li>
+              ))}
+            </ul>
           </div>
         </article>
       </section>
 
-      {/* Sidebar DERECHA */}
-      <aside
-        className="rounded-lg p-8 shadow-lg"
-        style={{ backgroundColor: '#F7F9FF' }}
-      >
+      <aside className="rounded-lg p-8 shadow-lg" style={{ backgroundColor: '#F7F9FF' }}>
         <div className="space-y-6">
-          <div className="pb-6 border-b" style={{ borderColor: 'rgba(28, 101, 166, 1)' }}>
+          <div className="border-b pb-6" style={{ borderColor: 'rgba(28, 101, 166, 1)' }}>
             <h3 className="text-lg font-semibold text-[#0B1B86]">Valor del curso</h3>
-            {!isFree && (
-              <>
-                <PaymentMethod />
-              </>
-            )}
 
-            {isFree && (
-              <FreeMethod />
+            {!isFree ? (
+              <PaymentMethod
+                priceLabel={new Intl.NumberFormat('es-PE', {
+                  style: 'currency',
+                  currency: 'PEN',
+                  minimumFractionDigits: 2,
+                }).format(Number(course.price || 0))}
+                ctaLabel={detail.action?.label || 'Comprar'}
+                currentStatusLabel={paidStatusLabel}
+                onCheckout={handlePaidCheckout}
+                loading={actionLoading}
+                disabled={detail.action?.disabled}
+              />
+            ) : (
+              <FreeMethod
+                ctaLabel={detail.action?.label || 'Empezar'}
+                onStart={handleFreeStart}
+                loading={actionLoading}
+                disabled={detail.action?.disabled}
+              />
             )}
 
             <div className="mt-6 border-b" style={{ borderColor: 'rgba(28, 101, 166, 1)' }} />
 
-
-            <div className="mt-6  space-y-3">
-              <h4 className="text-md mb-8 font-bold text-[#0B1B86]">Incluye</h4>
+            <div className="mt-6 space-y-3">
+              <h4 className="mb-8 text-md font-bold text-[#0B1B86]">Incluye</h4>
               <ul className="space-y-4 text-sm text-gray-600">
-                {includedItems.map(({ label, icon: Icon }) => (
-                  <li key={label} className="flex items-center gap-3">
-                    <Icon className="w-4 h-4 text-[#132391]" />
-                    {label}
-                  </li>
-                ))}
+                {detail.includes.map((label) => {
+                  const icon =
+                    label.includes('video') ? Youtube :
+                    label.includes('dias') ? Calendar :
+                    label.includes('Material') ? FileDown :
+                    label.includes('Certificado') ? Award :
+                    FilePenLine
+
+                  const Icon = icon
+
+                  return (
+                    <li key={label} className="flex items-center gap-3">
+                      <Icon className="w-4 h-4 text-[#132391]" />
+                      {label}
+                    </li>
+                  )
+                })}
               </ul>
             </div>
           </div>
 
           <div className="pt-6">
-            {/* Respaldo oficial */}
-            <div className="pb-8 border-b" style={{ borderColor: 'rgba(28, 101, 166, 1)' }}>
+            <div className="border-b pb-8" style={{ borderColor: 'rgba(28, 101, 166, 1)' }}>
               <h4 className="text-md font-bold text-[#0B1B86]">Respaldo oficial de:</h4>
               <ul className="mt-3 space-y-2 text-sm text-gray-600">
                 {endorsements.map((item) => (
@@ -167,59 +295,6 @@ const CourseDetailPage = () => {
                 ))}
               </ul>
             </div>
-
-            {/* Ellos ya se capacitaron */}
-            <div className="pt-6">
-              <h4 className="text-md font-bold text-[#0B1B86]">Ellos ya se capacitaron</h4>
-              <p className="text-xs text-gray-500">+ 0000 ALUMNOS CERTIFICADOS CON ÉXITO</p>
-
-              <div className="mt-3 flex items-start gap-8">
-                <div>
-                  <div className="flex items-center gap-1 text-[#F5A623]">
-                    <p className="text-xl font-bold text-black">4.5</p>
-                    <Star className="w-4 h-4 text-[#F5A623] fill-[#F5A623]" />
-                  </div>
-                  <p className="mt-1 text-xs text-gray-500">106 reseñas</p>
-                </div>
-                <div>
-                  <p className="text-xl font-bold text-black">88%</p>
-                  <p className="mt-1 text-xs text-gray-500">Recomendados</p>
-                </div>
-              </div>
-
-              <div className="mt-4 space-y-2 text-sm">
-                <div className="flex items-center gap-2">
-                  <span className="w-12 text-xs font-semibold uppercase text-gray-500">5</span>
-                  <div className="h-2 flex-1 overflow-hidden rounded-full bg-gray-200">
-                    <div className="h-full w-4/5 rounded-full bg-[#F5A623]" />
-                  </div>
-                </div>
-                <div className="flex items-center gap-2">
-                  <span className="w-12 text-xs font-semibold uppercase text-gray-500">4</span>
-                  <div className="h-2 flex-1 overflow-hidden rounded-full bg-gray-200">
-                    <div className="h-full w-3/5 rounded-full bg-[#F5A623]" />
-                  </div>
-                </div>
-                <div className="flex items-center gap-2">
-                  <span className="w-12 text-xs font-semibold uppercase text-gray-500">3</span>
-                  <div className="h-2 flex-1 overflow-hidden rounded-full bg-gray-200">
-                    <div className="h-full w-2/5 rounded-full bg-[#F5A623]" />
-                  </div>
-                </div>
-                <div className="flex items-center gap-2">
-                  <span className="w-12 text-xs font-semibold uppercase text-gray-500">2</span>
-                  <div className="h-2 flex-1 overflow-hidden rounded-full bg-gray-200">
-                    <div className="h-full w-1/5 rounded-full bg-[#F5A623]" />
-                  </div>
-                </div>
-                <div className="flex items-center gap-2">
-                  <span className="w-12 text-xs font-semibold uppercase text-gray-500">1</span>
-                  <div className="h-2 flex-1 overflow-hidden rounded-full bg-gray-200">
-                    <div className="h-full w-[10%] rounded-full bg-[#F5A623]" />
-                  </div>
-                </div>
-              </div>
-            </div>
           </div>
         </div>
       </aside>
@@ -228,4 +303,3 @@ const CourseDetailPage = () => {
 }
 
 export default CourseDetailPage
-

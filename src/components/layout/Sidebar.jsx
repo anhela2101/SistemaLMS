@@ -54,22 +54,26 @@ const Sidebar = () => {
 
       {/* Menú */}
       <nav className="flex-1 px-4 py-6 space-y-2 overflow-auto">
-        {menuItems.map(({ label, to, icon: Icon }) => (
-          <NavLink
-            key={to}
-            to={to}
-            className={({ isActive }) =>
-              `flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200 ${
-                isActive
-                  ? "bg-white text-[#0B1B86] shadow-lg shadow-black/10"
-                  : "text-white/80 hover:bg-white/10 hover:text-white"
-              }`
-            }
-          >
-            <Icon className="w-5 h-5" />
-            <span className="text-sm font-semibold">{label}</span>
-          </NavLink>
-        ))}
+        {menuItems.map(({ label, to, icon }) => {
+          const Icon = icon;
+
+          return (
+            <NavLink
+              key={to}
+              to={to}
+              className={({ isActive }) =>
+                `flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200 ${
+                  isActive
+                    ? "bg-white text-[#0B1B86] shadow-lg shadow-black/10"
+                    : "text-white/80 hover:bg-white/10 hover:text-white"
+                }`
+              }
+            >
+              <Icon className="w-5 h-5" />
+              <span className="text-sm font-semibold">{label}</span>
+            </NavLink>
+          );
+        })}
       </nav>
 
       {/* Ayuda */}
