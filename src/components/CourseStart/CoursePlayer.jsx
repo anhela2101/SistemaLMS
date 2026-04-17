@@ -1,10 +1,12 @@
 import React, { useState } from 'react'
 import { Play, Pause, Volume2, VolumeX, Maximize, SkipBack, SkipForward, MessageSquare } from 'lucide-react'
+import { isBunnyStreamPlayUrl } from '../../lib/bunnyVideo'
 
 const CoursePlayer = ({ courseTitle, courseDescription, lesson, fallbackImage }) => {
   const [isPlaying, setIsPlaying] = useState(false)
   const [isMuted, setIsMuted] = useState(false)
   const [progress] = useState(35)
+  const isStreamEmbed = isBunnyStreamPlayUrl(lesson?.bunny_video_url)
 
   const togglePlay = () => setIsPlaying((current) => !current)
   const toggleMute = () => setIsMuted((current) => !current)
@@ -12,7 +14,15 @@ const CoursePlayer = ({ courseTitle, courseDescription, lesson, fallbackImage })
   return (
     <div className="space-y-6">
       <div className="group relative aspect-video w-full overflow-hidden rounded-xl bg-black">
-        {lesson?.bunny_video_url ? (
+        {isStreamEmbed ? (
+          <iframe
+            src={lesson.bunny_video_url}
+            title={lesson?.title || courseTitle}
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+            allowFullScreen
+            className="h-full w-full border-0"
+          />
+        ) : lesson?.bunny_video_url ? (
           <video
             src={lesson.bunny_video_url}
             poster={fallbackImage}
