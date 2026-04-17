@@ -14,6 +14,7 @@ Portal de alumnos del LMS. Este proyecto consume Supabase para autenticacion, pe
 - Mis compras conectadas a `payments`.
 - Mis certificados conectados a `certificates`.
 - Detalle de curso y vista de curso conectados a `courses`, `course_modules` y `lessons`.
+- Reproduccion de videos Bunny Stream usando URL de `play`.
 - Activacion de cursos gratuitos via endpoint serverless.
 - Integracion base de Flow:
   - crear checkout
@@ -27,7 +28,7 @@ Portal de alumnos del LMS. Este proyecto consume Supabase para autenticacion, pe
 - Confirmar flujo end-to-end real de Flow en entorno desplegado.
 - Corregir cualquier error residual que devuelva `/api/payments/flow/create` al probar con datos reales.
 - Configurar SMTP custom en Supabase si se quiere que Auth envie con dominio propio.
-- Integrar Bunny.net para videos/materiales reales.
+- Integrar subida administrativa directa de PDFs y videos hacia Bunny.net.
 - Implementar examenes, resultados y certificados automáticos completos.
 - Generacion real de PDF de certificados.
 - Automatizaciones completas de Brevo: bienvenida, compra, certificado, recordatorios.
@@ -127,4 +128,3 @@ npx vercel dev
 - `npm run dev` solo levanta Vite. No sirve para probar funciones `api`.
 - Para probar pagos, checkout y endpoints serverless, usar `npx vercel dev`.
 - Si el checkout falla, revisar la respuesta de `POST /api/payments/flow/create` en DevTools > Network.
-

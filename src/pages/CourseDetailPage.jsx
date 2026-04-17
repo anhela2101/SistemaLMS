@@ -16,6 +16,7 @@ import {
 import PaymentMethod from '../components/courseDetails/paymentMethod'
 import FreeMethod from '../components/courseDetails/freeMethod'
 import { createFlowCheckout, createFreeEnrollment, loadCourseDetail } from '../lib/lmsData'
+import { isBunnyStreamPlayUrl } from '../lib/bunnyVideo'
 
 const endorsements = [
   'Centro de Entrenamiento Internacional Dr. Vigo RCP',
@@ -154,6 +155,7 @@ const CourseDetailPage = () => {
   const { course, lessonCount, firstLesson } = detail
   const isFree = course.course_type === 'free'
   const paidStatusLabel = detail.latestPayment?.status === 'pending' ? 'Tienes un pago pendiente para este curso.' : null
+  const isStreamEmbed = isBunnyStreamPlayUrl(firstLesson?.bunny_video_url)
 
   return (
     <div className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_360px]">
@@ -167,14 +169,24 @@ const CourseDetailPage = () => {
           <div className="overflow-hidden rounded-lg bg-black">
             <div className="relative h-72 w-full">
               {firstLesson?.bunny_video_url ? (
-                <video
-                  className="h-full w-full object-cover"
-                  controls
-                  poster={detail.image}
-                >
-                  <source src={firstLesson.bunny_video_url} type="video/mp4" />
-                  Tu navegador no soporta la reproduccion de video.
-                </video>
+                isStreamEmbed ? (
+                  <iframe
+                    src={firstLesson.bunny_video_url}
+                    title={firstLesson?.title || course.title}
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                    allowFullScreen
+                    className="h-full w-full border-0"
+                  />
+                ) : (
+                  <video
+                    className="h-full w-full object-cover"
+                    controls
+                    poster={detail.image}
+                  >
+                    <source src={firstLesson.bunny_video_url} type="video/mp4" />
+                    Tu navegador no soporta la reproduccion de video.
+                  </video>
+                )
               ) : (
                 <img src={detail.image} alt={course.title} className="h-full w-full object-cover" />
               )}
